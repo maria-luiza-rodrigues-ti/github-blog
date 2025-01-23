@@ -28,6 +28,9 @@ export default {
         "base-profile": "#0B1B2B",
         "base-background": "#071422",
         "base-input": "#040F1A"
+      },
+      boxShadow: {
+        profile: "0px 2px 28px 0px rgba(0, 0, 0, 0.20)"
       }
     },
   },
