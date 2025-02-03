@@ -9,6 +9,5 @@ export default function Post() {
         <Outlet />
       </main>
     </>
-
   )
 }

@@ -4,6 +4,9 @@ import { faGithub } from '@fortawesome/free-brands-svg-icons';
 import { Link, useLoaderData } from '@remix-run/react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { GitHubSearchIssuesResponse, Issue } from '~/interfaces/GithubAPIResponse';
+import Markdown from 'react-markdown';
+import { getDaysSinceUpdate } from '~/utils/getDaysSinceUpdate';
 
 export const loader = async () => {
   try {
@@ -17,7 +20,7 @@ export const loader = async () => {
 
 export default function Index() {
   const data = useLoaderData<typeof loader>();
-  const [issues, setIssues] = useState([])
+  const [issues, setIssues] = useState<GitHubSearchIssuesResponse | null>(null)
 
   async function getIssues() {
     const encodedQuery = `repo:github-blog type:issue is:issue user:maria-luiza-rodrigues-ti`
@@ -36,12 +39,8 @@ export default function Index() {
   }
 
   useEffect(() => {
-    getIssues()
+    getIssues();
   }, [])
-
-  useEffect(() => {
-    console.log("Issues:", issues)
-  }, [issues])
 
 
   return (
@@ -71,29 +70,23 @@ export default function Index() {
             <input type="text" placeholder='Buscar conteúdo' className='col-span-2 rounded-md border border-base-border bg-base-input px-4 py-3 placeholder:text-base placeholder:font-sans placeholder:font-normal placeholder:text-base-label' />
           </form>
           <ul className='flex flex-wrap gap-8 max-w-[864px] mx-auto'>
-            <li className='max-w-[416px] bg-base-post rounded-[10px] p-8'>
-              <Link to={`/post/1`}>
-                <article>
-                  <header className='flex gap-4 justify-between'>
-                    <h2 className='text-base-title font-sans text-xl font-bold w-4/5'>JavaScript data types and data structures</h2>
-                    <span className='font-sans text-sm leading-[160%] text-right text-base-label'>Há 1 dia</span>
-                  </header>
-                  <section className='mt-5'><p className='overflow-hidden text-ellipsis line-clamp-4 text-base-text'>Programming languages all have built-in data structures, but these often differ from one language to another. This article attempts to list the built-in data structures available in JavaScript and what properties they have. These can be used to build other data structures. Wherever possible, comparisons with other languages are drawn.
-
-                    Dynamic typing
-                    JavaScript is a loosely typed and dynamic language. Variables in JavaScript are not directly associated with any particular value type, and any variable can be assigned (and re-assigned) values of all types:
-
-                    let foo = 42; // foo is now a number
-                    foo = 'bar'; // foo is now a string
-                    foo = true; // foo is now a boolean</p></section>
-                </article>
-              </Link>
-            </li>
+            {issues && issues.items?.map((issue: Issue) => (
+              <li key={issue.id} className='max-w-[416px] bg-base-post rounded-[10px] p-8'>
+                <Link to={`/post/${issue.number}`}>
+                  <article>
+                    <header className='flex gap-4 justify-between'>
+                      <h2 className='text-base-title font-sans text-xl font-bold w-full'>{issue.title}</h2>
+                      <span className='font-sans text-sm leading-[160%] text-right text-base-label w-full max-w-max'>Há {getDaysSinceUpdate(issue.updated_at) === 1 ? `${getDaysSinceUpdate(issue.updated_at)} dia` : `${getDaysSinceUpdate(issue.updated_at)} dias`}</span>
+                    </header>
+                    <section className='mt-5'><p className='overflow-hidden text-ellipsis line-clamp-4 text-base-text'><Markdown>{issue.body}</Markdown></p></section>
+                  </article>
+                </Link>
+              </li>
+            ))}
           </ul>
         </section>
       </main>
     </>
-
   );
 }
 
