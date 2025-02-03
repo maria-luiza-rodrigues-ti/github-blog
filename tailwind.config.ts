@@ -27,12 +27,12 @@ export default {
         "base-post": "#112131",
         "base-profile": "#0B1B2B",
         "base-background": "#071422",
-        "base-input": "#040F1A"
+        "base-input": "#040F1A",
       },
       boxShadow: {
-        profile: "0px 2px 28px 0px rgba(0, 0, 0, 0.20)"
-      }
+        profile: "0px 2px 28px 0px rgba(0, 0, 0, 0.20)",
+      },
     },
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/typography")],
 } satisfies Config;

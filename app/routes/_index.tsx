@@ -42,7 +42,6 @@ export default function Index() {
     getIssues();
   }, [])
 
-
   return (
     <>
       <header className="bg-[url('images/cover.png')] bg-cover bg-center h-[296px] flex items-center justify-center relative">
@@ -76,9 +75,9 @@ export default function Index() {
                   <article>
                     <header className='flex gap-4 justify-between'>
                       <h2 className='text-base-title font-sans text-xl font-bold w-full'>{issue.title}</h2>
-                      <span className='font-sans text-sm leading-[160%] text-right text-base-label w-full max-w-max'>Há {getDaysSinceUpdate(issue.updated_at) === 1 ? `${getDaysSinceUpdate(issue.updated_at)} dia` : `${getDaysSinceUpdate(issue.updated_at)} dias`}</span>
+                      <span className='font-sans text-sm leading-[160%] text-right text-base-label w-full max-w-max'>{getDaysSinceUpdate(issue.updated_at)}</span>
                     </header>
-                    <section className='mt-5'><p className='overflow-hidden text-ellipsis line-clamp-4 text-base-text'><Markdown>{issue.body}</Markdown></p></section>
+                    <section className='mt-5 overflow-hidden text-ellipsis line-clamp-4 text-base-text'><Markdown>{issue.body}</Markdown></section>
                   </article>
                 </Link>
               </li>

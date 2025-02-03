@@ -4,7 +4,13 @@ export function getDaysSinceUpdate(date: string) {
 
   const diffTime = today.getTime() - issueDate.getTime();
 
-  const diferenceDays = diffTime / (1000 * 3600 * 24);
+  const diferenceDays = Math.floor(diffTime / (1000 * 3600 * 24));
 
-  return Math.floor(diferenceDays);
+  if (diferenceDays === 1) {
+    return `Há ${diferenceDays} dia`;
+  } else if (diferenceDays === 0) {
+    return `Hoje`;
+  } else {
+    return `Há ${diferenceDays} dias`;
+  }
 }
