@@ -63,7 +63,7 @@ export default function Index() {
           </section>
         </article>
         <section className='bg-base-background pt-[200px] min-h-[calc(100vh-296px)]'>
-          <form action="" className='grid grid-cols-2 grid-rows-2 justify-between max-w-[864px] mx-auto gap-y-3 mb-12'>
+          <form action="" className='grid grid-cols-2 grid-flow-row auto-rows-max justify-between max-w-[864px] mx-auto gap-y-3 mb-12'>
             <label htmlFor="" className='text-base-subtitle text-lg leading-[160%] font-bold'>Publicações</label>
             <span className='text-right text-base-span text-sm leading-[160%] font-sans'>6 publicações</span>
             <input type="text" placeholder='Buscar conteúdo' className='col-span-2 rounded-md border border-base-border bg-base-input px-4 py-3 placeholder:text-base placeholder:font-sans placeholder:font-normal placeholder:text-base-label' />
