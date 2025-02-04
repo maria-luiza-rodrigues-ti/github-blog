@@ -26,10 +26,6 @@ export default function Post() {
     navigate(-1);
   }
 
-  useEffect(() => {
-    console.log(issue)
-  }, [issue])
-
   return (
     <main>
       <article className='flex flex-col z-10 items-center gap-5 absolute max-w-[864px] mx-auto px-10 py-8 bg-base-profile rounded-[10px] left-1/2 -translate-x-1/2 top-[208px] w-full'>

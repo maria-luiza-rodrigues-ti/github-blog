@@ -1,7 +1,7 @@
 export interface GitHubSearchIssuesResponse {
   total_count: number;
   incomplete_results: boolean;
-  items: Issue[];
+  items: Issue[] | undefined | null;
 }
 
 export interface Issue {

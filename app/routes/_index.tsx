@@ -7,6 +7,16 @@ import { useEffect, useState } from 'react';
 import { GitHubSearchIssuesResponse, Issue } from '~/interfaces/GithubAPIResponse';
 import Markdown from 'react-markdown';
 import { getDaysSinceUpdate } from '~/utils/getDaysSinceUpdate';
+import * as z from 'zod';
+import { Controller, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { ErrorMessage } from '@hookform/error-message';
+
+const SearchSchema = z.object({
+  search: z.string().nonempty("Campo de busca não pode ser vazio")
+})
+
+type SearchInput = z.infer<typeof SearchSchema>;
 
 export const loader = async () => {
   try {
@@ -20,7 +30,13 @@ export const loader = async () => {
 
 export default function Index() {
   const data = useLoaderData<typeof loader>();
-  const [issues, setIssues] = useState<GitHubSearchIssuesResponse | null>(null)
+  const [issues, setIssues] = useState<GitHubSearchIssuesResponse | null>(null);
+  const { handleSubmit, control, reset, formState: { errors } } = useForm<SearchInput>({
+    resolver: zodResolver(SearchSchema),
+    defaultValues: {
+      search: ""
+    }
+  })
 
   async function getIssues() {
     const encodedQuery = `repo:github-blog type:issue is:issue user:maria-luiza-rodrigues-ti`
@@ -41,6 +57,27 @@ export default function Index() {
   useEffect(() => {
     getIssues();
   }, [])
+
+  function handleSearchIssues(formData: SearchInput) {
+    const query = formData.search;
+
+    if (query === "") {
+      setIssues(null);
+      reset();
+      return;
+    }
+
+    const filteredIssues = issues?.items?.filter((issue) => {
+      return issue.title.toLowerCase().includes(query.toLowerCase())
+    })
+
+    setIssues((prevIssues) => prevIssues ? {
+      ...prevIssues,
+      items: filteredIssues || []
+    } : null)
+
+    reset();
+  }
 
   return (
     <>
@@ -63,10 +100,23 @@ export default function Index() {
           </section>
         </article>
         <section className='bg-base-background pt-[200px] min-h-[calc(100vh-296px)]'>
-          <form action="" className='grid grid-cols-2 grid-flow-row auto-rows-max justify-between max-w-[864px] mx-auto gap-y-3 mb-12'>
+          <form onSubmit={handleSubmit(handleSearchIssues)} className='grid grid-cols-2 grid-flow-row auto-rows-max justify-between max-w-[864px] mx-auto gap-y-3 mb-12'>
             <label htmlFor="" className='text-base-subtitle text-lg leading-[160%] font-bold'>Publicações</label>
             <span className='text-right text-base-span text-sm leading-[160%] font-sans'>6 publicações</span>
-            <input type="text" placeholder='Buscar conteúdo' className='col-span-2 rounded-md border border-base-border bg-base-input px-4 py-3 placeholder:text-base placeholder:font-sans placeholder:font-normal placeholder:text-base-label' />
+            <Controller
+              control={control}
+              name="search"
+              render={({ field }) => (
+                <>
+                  <input {...field} type="text" placeholder='Buscar conteúdo' className='col-span-2 rounded-md border border-base-border bg-base-input px-4 py-3 placeholder:text-base placeholder:font-sans text-base-text placeholder:font-normal placeholder:text-base-label' onChange={field.onChange} />
+                  <ErrorMessage
+                    errors={errors}
+                    name="search"
+                    render={({ message }) => <p className='text-xs text-red-500'>{message}</p>}
+                  />
+                </>
+              )}
+            />
           </form>
           <ul className='flex flex-wrap gap-8 max-w-[864px] mx-auto'>
             {issues && issues.items?.map((issue: Issue) => (
